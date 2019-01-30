@@ -10,24 +10,28 @@
  */
 class Sum implements Expression {
 
-    Money augend;
-    Money addend;
+    Expression augend;
+    Expression addend;
 
-    Sum(Money augend, Money addend) {
+    Sum(Expression augend, Expression addend) {
         this.augend = augend;
         this.addend = addend;
     }
 
     @Override
-    public Money reduce(String to) {
-        int amount = augend.amount + addend.amount;
+    public Money reduce(Bank bank, String to) {
+        int amount = augend.reduce(bank, to).amount + addend.reduce(bank, to).amount;
         return new Money(amount, to);
     }
 
     @Override
-    public Money reduce(Bank bank, String to) {
-        int amount = augend.amount + addend.amount;
-        return new Money(amount, to);
+    public Expression plus(Expression addend) {
+        return new Sum(this, addend);
+    }
+
+    @Override
+    public Expression times(int multiplier) {
+        return new Sum(augend.times(multiplier), addend.times(multiplier));
     }
 
 }
